@@ -1,0 +1,108 @@
+apiVersion: v1
+kind: Plugin
+metadata:
+  author: Jerry
+  name: qq_forward_limiter
+  repository: ""
+  version: 0.1.0
+  description:
+    en_US: "Forward long or burst bot replies as QQ merged-forward messages."
+    zh_Hans: "将 QQ 群内超长或短时间多次的 Bot 回复改为合并转发消息。"
+  label:
+    en_US: QQ Forward Limiter
+    zh_Hans: QQ 转发限流
+  icon: assets/icon.svg
+spec:
+  config:
+    - name: enabled
+      type: boolean
+      required: false
+      default: true
+      description:
+        zh_Hans: "是否启用插件。"
+        en_US: "Whether to enable the plugin."
+    - name: group_only
+      type: boolean
+      required: false
+      default: true
+      description:
+        zh_Hans: "仅处理群聊回复。建议保持开启，QQ 合并转发主要用于群聊。"
+        en_US: "Only handle group replies. Recommended for QQ merged forwards."
+    - name: long_text_threshold
+      type: integer
+      required: false
+      default: 280
+      description:
+        zh_Hans: "单条回复达到多少字符后立即改为 QQ 合并转发，0 表示关闭。"
+        en_US: "Forward immediately when a single reply reaches this length, 0 to disable."
+    - name: burst_window_seconds
+      type: integer
+      required: false
+      default: 3
+      description:
+        zh_Hans: "短时间多次回复的判定窗口。插件会在最后一条回复后等待这么多秒再统一发送。"
+        en_US: "Burst window in seconds. The plugin waits this long after the last reply before flushing."
+    - name: burst_count_threshold
+      type: integer
+      required: false
+      default: 2
+      description:
+        zh_Hans: "窗口内累计多少条回复时改为 QQ 合并转发。"
+        en_US: "Use merged forward when replies in the window reach this count."
+    - name: max_node_chars
+      type: integer
+      required: false
+      default: 1000
+      description:
+        zh_Hans: "单个转发节点的最大字符数。超出后会拆成多个节点。"
+        en_US: "Maximum characters per forward node. Longer text is split into multiple nodes."
+    - name: node_sender_name
+      type: string
+      required: false
+      default: ""
+      description:
+        zh_Hans: "转发节点显示昵称。留空时优先使用 Bot 名称。"
+        en_US: "Display name for forward nodes. Uses bot name when empty."
+    - name: display_title
+      type: string
+      required: false
+      default: "机器人转发消息"
+      description:
+        zh_Hans: "QQ 合并转发卡片标题。"
+        en_US: "Title of the merged-forward card."
+    - name: display_source
+      type: string
+      required: false
+      default: "LangBot"
+      description:
+        zh_Hans: "QQ 合并转发卡片来源文案。"
+        en_US: "Source text shown in the merged-forward card."
+    - name: preview_line_limit
+      type: integer
+      required: false
+      default: 4
+      description:
+        zh_Hans: "合并转发预览展示的行数。"
+        en_US: "Number of preview lines shown on the merged-forward card."
+    - name: preview_line_chars
+      type: integer
+      required: false
+      default: 48
+      description:
+        zh_Hans: "每条预览的最大字符数。"
+        en_US: "Maximum characters for each preview line."
+    - name: ignore_function_call_notices
+      type: boolean
+      required: false
+      default: true
+      description:
+        zh_Hans: "忽略 LangBot 的函数调用提示消息，例如 Call tool...。"
+        en_US: "Ignore LangBot function-call notice messages such as Call tool...."
+  components:
+    EventListener:
+      fromDirs:
+        - path: components/event_listener/
+execution:
+  python:
+    path: main.py
+    attr: QQForwardLimiterPlugin

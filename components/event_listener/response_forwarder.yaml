@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: EventListener
+metadata:
+  name: response_forwarder
+  label:
+    en_US: QQResponseForwarder
+    zh_Hans: QQ 回复转发器
+spec:
+execution:
+  python:
+    path: response_forwarder.py
+    attr: QQResponseForwarder

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="QQ Forward Limiter">
+  <rect width="128" height="128" rx="28" fill="#0f172a"/>
+  <rect x="18" y="22" width="60" height="46" rx="12" fill="#38bdf8"/>
+  <rect x="50" y="50" width="60" height="46" rx="12" fill="#22c55e"/>
+  <path d="M40 45h18M40 55h28M72 73h18M72 83h22" stroke="#0f172a" stroke-linecap="round" stroke-width="7"/>
+</svg>
