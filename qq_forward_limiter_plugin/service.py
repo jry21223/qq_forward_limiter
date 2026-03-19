@@ -8,7 +8,7 @@ from typing import Any
 import langbot_plugin.api.entities.builtin.platform.message as platform_message
 
 
-SUPPORTED_QQ_ADAPTERS = {"aiocqhttp", "nakuru"}
+SUPPORTED_QQ_ADAPTERS = {"aiocqhttp", "nakuru", "napcat", "llmonebot", "onebotv11", "onebot"}
 
 
 @dataclass(slots=True)
@@ -55,10 +55,16 @@ class QQForwardLimiterService:
 
         try:
             bot_info = await self.plugin.get_bot_info(bot_uuid)
-        except Exception:
+        except Exception as e:
+            self.plugin.ap.logger.error(f"[QQForwardLimiter] 获取 Bot 信息失败：{e}")
             return
 
+        # 调试日志：检查适配器
+        adapter = str(bot_info.get("adapter", "") or "")
+        self.plugin.ap.logger.debug(f"[QQForwardLimiter] 适配器：{adapter}, 类型：{event.launcher_type}")
+        
         if not self._is_supported_target(bot_info, event.launcher_type):
+            self.plugin.ap.logger.warning(f"[QQForwardLimiter] 不支持的目标：adapter={adapter}, type={event.launcher_type}")
             return
 
         sender_id = self._resolve_sender_id(bot_info)
@@ -205,8 +211,13 @@ class QQForwardLimiterService:
         )
 
         try:
+            self.plugin.ap.logger.debug(f"[QQForwardLimiter] 发送合并转发：{len(texts)} 条消息到 {target_type}:{target_id}")
             await self.plugin.send_message(bot_uuid, target_type, target_id, message_chain)
-        except Exception:
+            self.plugin.ap.logger.info(f"[QQForwardLimiter] ✅ 合并转发成功")
+        except Exception as e:
+            self.plugin.ap.logger.error(f"[QQForwardLimiter] ❌ 合并转发失败：{e}")
+            self.plugin.ap.logger.debug(f"[QQForwardLimiter] 消息链：{message_chain}")
+            
             if ctx is not None:
                 combined = "\n\n".join(fallback_texts)
                 ctx.event.reply_message_chain = platform_message.MessageChain(
